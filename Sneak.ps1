@@ -112,7 +112,7 @@ invoke-command -Session $session{ New-Item -Path "C:\Users\$env:username\Desktop
  {
  public static void Exec()
  {
- string command = System.IO.File.ReadAllText(@`"$filepath`");
+ string command = System.IO.File.ReadAllText(@`"$using:filepath`");
  RunspaceConfiguration rspacecfg = RunspaceConfiguration.Create();
  Runspace rspace = RunspaceFactory.CreateRunspace(rspacecfg);
  rspace.Open();
@@ -142,6 +142,7 @@ $command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
 Invoke-Command -Session $session {Remove-Item -Path C:\Users\$env:username\desktop\standardfile.cs;Remove-Item -Path C:\Users\$env:username\desktop\standardfile.exe;Remove-Item -Path $using:filepath;Remove-Item -Path C:\users\$env:username\desktop\log.txt}
 }#EndElse
+Remove-pssession -Computername $Remotemachine
 }#End RunRemote
 
 
