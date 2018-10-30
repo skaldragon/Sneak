@@ -20,3 +20,7 @@ options:
 * -[Credential]        User you want to run the command as
 * -[RunRemote]         Runs the commands remotely
 * -[Spoof]             Spoofs the process as the chosen Spoofname
+
+# SneakV2.0
+* Fixed remoting to be able to retrieve files
+* added out file parameters for retrieval of files if needed
