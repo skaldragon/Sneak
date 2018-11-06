@@ -6,7 +6,7 @@
       | |   \ | |       /______\   | \
  _____| |    \| |_____ /        \  |  \
 "
-Write-Host "The WINRM Function Sneaking Framework" -ForegroundColor White
+Write-Host "The WINRM Function Sneaking Script" -ForegroundColor White
 write-host "
 sneak [-filepath] [-options]
 
@@ -31,9 +31,10 @@ param(
 [parameter(ParameterSetname="Remote")]
 [validatenotnull()] [string]$filepath,
 [parameter(ParameterSetname="Remote")]
+[parameter(ParameterSetname="Test")]
 [validatenotnull()]
 [string]$remotemachine,
-[parameter(ParameterSetname="Remote")]
+[parameter(ParameterSetname="Test")]
 [switch]$testconnection,
 [parameter()]
 [validatenotnull()]
@@ -67,17 +68,19 @@ break;
 }
 $hiddenpath="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32"
 $hiddenpath2="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\"
-Import-Module -Name $filepath
 if($testconnection){
 if(Test-Connection -ComputerName $remotemachine -Count 4){
+if(Get-Service -Name WinRM -ComputerName $remotemachine){
 write-host "Connection good" -ForegroundColor Green}
 else{
 Write-Host "Cannot connect to host" -ForegroundColor Red
 return}
+}
                     }#End Testconnection
 
 
 if($RunRemote){
+Import-Module -Name $filepath
 $Creds=Get-Credential -Credential $Credential
 $session=New-PSSession -ComputerName $remotemachine -Credential $Creds
 $sessiontest=""
@@ -173,6 +176,7 @@ Remove-pssession -Computername $Remotemachine
 
 
 if($LocalHostRan){
+Import-Module -Name $filepath
 New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\" -ItemType directory
 $change=Get-item -Path $hiddenpath;
 $change.Attributes="hidden"
@@ -226,7 +230,7 @@ $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
 Clear-Content -Path $filepath
 Add-Content -Path $filepath -Value $removalstuff
-Write-Host "Cleaning up [+]" -ForegroundColor Green
+Write-Host "Cleaning up [+]" -ForegroundColor Gray
 cd C:\Users
 sleep -s 15
 Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force
@@ -240,7 +244,7 @@ $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
 Clear-Content -Path $filepath
 Add-Content -Path $filepath -Value $removalstuff
-Write-Host "Cleaning up [+]" -ForegroundColor Green
+Write-Host "Cleaning up [+]" -ForegroundColor Gray
 cd C:\Users
 sleep -s 15
 Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force
