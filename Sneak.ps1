@@ -6,7 +6,7 @@
       | |   \ | |       /______\   | \
  _____| |    \| |_____ /        \  |  \
 "
-Write-Host "The WINRM Function Sneaking Script" -ForegroundColor White
+Write-Host "The WINRM Function Sneaking Framework" -ForegroundColor White
 write-host "
 sneak [-filepath] [-options]
 
