@@ -101,7 +101,13 @@ return}
 if($RunRemote){
 Import-Module -Name $filepath
 $Creds=Get-Credential -Credential $Credential
+$Value=(Get-PSSession | Where-Object{$_.ComputerName -match "$remotemachine"} | select state).state
+if($Value -match "Opened"{
+Write-Host "You already have a session opened with this computer" -ForegroundColor Red
+}
+else{
 $session=New-PSSession -ComputerName $remotemachine -Credential $Creds
+}
 $sessiontest=""
 $sessiontest=(Get-PSSession).Id
 if($sessiontest -eq "$null"){
