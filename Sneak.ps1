@@ -255,7 +255,7 @@ $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
 Clear-Content -Path $filepath
 Add-Content -Path $filepath -Value $removalstuff
-Write-Host "Cleaning up [+]" -ForegroundColor Gray
+Write-Host "Cleaning up [+]" -ForegroundColor Green
 cd C:\Users
 sleep -s 15
 Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force
@@ -269,7 +269,7 @@ $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
 Clear-Content -Path $filepath
 Add-Content -Path $filepath -Value $removalstuff
-Write-Host "Cleaning up [+]" -ForegroundColor Gray
+Write-Host "Cleaning up [+]" -ForegroundColor Green
 cd C:\Users
 sleep -s 15
 Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force
