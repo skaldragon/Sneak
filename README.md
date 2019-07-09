@@ -28,3 +28,6 @@ options:
 * Added Session viewing so now all sessions are opened til you close them
 * Added Session Removing so now you can have multiple sessions and remove ones you don't need anymore
 * More fluid session control
+# SneakV4.0
+* Compiles on Back end instead of front end
+* Lessens noise on Front end to prevent detection even more
