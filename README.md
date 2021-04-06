@@ -29,5 +29,5 @@ options:
 * Added Session Removing so now you can have multiple sessions and remove ones you don't need anymore
 * More fluid session control
 # SneakV4.0
-* Compiles on Back end instead of front end
+* Compiles on Front end instead of Back end
 * Lessens noise on Front end to prevent detection even more
