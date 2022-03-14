@@ -30,4 +30,4 @@ options:
 * More fluid session control
 # SneakV4.0
 * Compiles on Front end instead of Back end
-* Lessens noise on Front end to prevent detection even more
+* Lessens noise on Back end to prevent detection even more
