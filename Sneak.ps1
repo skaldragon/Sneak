@@ -14,7 +14,7 @@ options
 -remotemachine     name of remote machine to sneak(Used with RunRemote)
 -testconnection    tests remote box for connectivity
 -functioncommand   command from function to run on local box or remote box
--localhostran      run sneak withing the localhost
+-localhostran      run sneak within the localhost
 -Spoofname         Process you want to spoof as(run with spoof switch)
 -Credential        User you want to run the command as
 -RunRemote         Runs the commands remotely
@@ -87,7 +87,7 @@ if($pathcheck1 -and $pathcheck2){
 Write-Host "You have the files necessary to go on" -ForegroundColor Green
 }#End If
 else{
-Write-Host "Sorry you don't have the necessary files to do this operarion" -ForegroundColor Red
+Write-Host "Sorry you don't have the necessary files to do this operation" -ForegroundColor Red
 break;
 }}
 if($UserList){
