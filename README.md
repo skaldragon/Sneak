@@ -1,5 +1,5 @@
 # Sneak
-A Powershell WINRM Function Script to run Powershell on a remote target without touching Powershell.exe on the remote host.
+A Powershell Post Exploitation WINRM Function Script to run Powershell on a remote target without touching Powershell.exe on the remote host.
 
 # Sneak
 * Able to run any powershell function without the use of touching powershell.exe on any local/remote system
